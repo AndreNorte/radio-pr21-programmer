@@ -43,7 +43,7 @@ cp scripts/pr21.py /usr/local/bin/pr21 && chmod +x /usr/local/bin/pr21
 The skill is plain Markdown plus the script. To rebuild the distributable archive:
 
 ```bash
-zip -qr radio-pr21-programmer.zip SKILL.md SKILL.ru.md README.md README.ru.md \
+zip -qr radio-pr21-programmer.zip SKILL.md SKILL.ru.md README.md README.en.md \
     BUILD.md BUILD.ru.md LICENSE references scripts assets examples
 ```
 

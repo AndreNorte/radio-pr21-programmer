@@ -79,7 +79,7 @@ iconutil -c icns AppIcon.iconset -o resources/AppIcon.icns
 ## Status: as is
 
 Published as is, with no warranty and no support obligations — see the main
-[README](../README.md). If you need something fixed, fork it and patch it, or hand it to an agent.
+[README](../README.en.md). If you need something fixed, fork it and patch it, or hand it to an agent.
 
 ## License
 

@@ -1,157 +1,157 @@
 # radio-pr21-programmer
 
-**English** · [Русский](README.ru.md)
+[English](README.en.md) · **Русский**
 
-An AI-agent skill plus a working toolkit for reading and writing **ONIKS PR-21** (M31 platform)
-handheld radios over a Kenwood 2-pin programming cable (CH340 USB-UART).
+Навык для ИИ-моделей и рабочий набор инструментов: чтение и запись каналов и настроек
+радиостанций **ОНИКС ПР-21** (платформа M31) через гарнитурный кабель Kenwood 2-pin
+на USB-UART CH340.
 
-Runs on macOS, Windows and Linux. No vendor software, no extra drivers beyond the OS built-ins.
+Работает на macOS, Windows и Linux. Без фирменного софта и без драйверов сверх системных.
 
-![CLI output: channels and settings read from a real radio](assets/screenshot-cli.png)
+![Вывод утилиты: каналы и настройки, прочитанные с реальной рации](assets/screenshot-cli.png)
 
-*Real output: all 16 channels and every radio setting read from a physical ONIKS PR-21,
-then decoded offline from a saved memory image.*
+*Реальный вывод: все 16 каналов и все настройки, снятые с физической ОНИКС ПР-21 и разобранные
+из сохранённого образа памяти.*
 
-## Tested hardware
+## Проверено на железе
 
-| Item | Value |
+| Что | Значение |
 |---|---|
-| Radio | **ONIKS PR-21**, 16 channels, 400–480 MHz, 0.5 / 2 W, no display, M31 platform |
-| Cable | USB-UART **CH340** (VID 0x1a86 / PID 0x7523), Kenwood 2-pin (3.5 mm + 2.5 mm) |
-| Host | macOS 15.8.3, Intel (also used earlier with the vendor CPS on Windows) |
-| Date | 2026-11-14 |
+| Рация | **ОНИКС ПР-21**, 16 каналов, 400–480 МГц, 0,5 / 2 Вт, без дисплея, платформа M31 |
+| Кабель | USB-UART **CH340** (VID 0x1a86 / PID 0x7523), Kenwood 2-pin (3,5 мм + 2,5 мм) |
+| Хост | macOS 15.8.3, Intel (ранее та же рация читалась фирменным CPS на Windows) |
+| Дата | 14.11.2026 |
 
-What was actually verified on this device, not assumed:
+Что именно подтверждено на этом устройстве, а не предположено:
 
-- **Read** — all 16 channels decoded; compared against the vendor CPS screen, **16 of 16 matched**,
-  including DCS codes and the disabled tone on channel 16.
-- **Settings** — squelch 5, beep on, battery save on, voice English, scan Carrier, TOT 60 s,
-  VOX 5, VOX delay 1.5 s, side keys Scan and Voice control — every value matched the CPS display.
-- **Write** — a channel's tone was changed, the radio acknowledged it, read-back confirmed the
-  change, then the original image was restored and compared byte for byte.
-- **Squelch behaviour** — level 0 opened the squelch (audible noise), level 5 was quiet again.
-- **Backup/restore** — the full 256-byte image was written back and matched the source exactly.
+- **Чтение** — разобраны все 16 каналов; сверка с экраном фирменного CPS: **16 из 16**, включая
+  DCS-коды и выключенный тон на 16-м канале.
+- **Настройки** — шумоподавление 5, писк вкл, экономия батареи вкл, голос English, скан Carrier,
+  TOT 60 с, VOX 5, задержка 1,5 с, боковые кнопки Scan и Voice control — всё совпало с CPS.
+- **Запись** — изменён тон канала, рация подтвердила, чтение подтвердило изменение, затем
+  исходный образ возвращён и сверен побайтно.
+- **Поведение шумоподавления** — уровень 0 открывал шум, уровень 5 снова давал тишину.
+- **Бэкап и откат** — образ на 256 байт записан назад и совпал с источником.
 
-The radio reports an 8-byte identifier that changes between sessions; the tool does not rely on it.
+Рация отдаёт 8-байтовый идентификатор, который меняется от сессии к сессии; утилита на него
+не опирается.
 
-**Other models are not tested.** ONIKS PR-20, PR-25, PR-27, PR-28 and PR-61 look similar on paper
-(same brand, same Kenwood jack, same vendor programmer), but no unit was available. See
-`references/compatible-models.md` for the compatibility criteria and the safe way to check a model.
+**Другие модели не проверялись.** ОНИКС ПР-20, ПР-25, ПР-27, ПР-28 и ПР-61 выглядят похоже
+по документации (тот же бренд, тот же гарнитурный разъём, тот же программатор), но ни одной
+из них на руках не было. Критерии совместимости и безопасный способ проверить свою модель —
+в `references/compatible-models.md`.
 
-## Why this exists
+## Зачем это
 
-The vendor only ships a Windows CPS, and the radio answers to a single undocumented magic word.
-The protocol here was recovered by reverse-engineering the vendor's own CPS files and verified
-against real hardware — every field is confirmed by write-and-read-back, not guessed.
+Производитель выпускает только Windows-программу, а рация отвечает на одно недокументированное
+слово. Протокол здесь восстановлен реверс-инжинирингом файлов CPS и проверен на живом
+устройстве: каждое поле подтверждено записью и обратным чтением, а не догадкой.
 
-## What it does
+## Что умеет
 
-- **Channels** — 16 slots: RX/TX frequency, DCS or CTCSS tone, power, busy lock, scan flag.
-- **Settings** — squelch, beep, battery save, voice language, TOT, VOX level and delay,
-  side key 1/2 actions, scan mode, spec mode.
-- **Backup and restore** — a full 256-byte memory image, byte-compared after every write.
-- **Cloning** — read one radio, write the same image into another.
-- **Presets** — ready-made sets for mountains, hills, forest, road and short-range use,
-  with the Russian regulatory limits documented alongside.
+- **Каналы** — 16 слотов: частота RX/TX, тон DCS или CTCSS, мощность, busy lock, флаг скана.
+- **Настройки** — шумоподавление, писк, экономия батареи, язык голоса, TOT, VOX и его задержка,
+  действия боковых кнопок, режим сканирования, spec.
+- **Бэкап и откат** — полный образ памяти на 256 байт, побайтовая сверка после каждой записи.
+- **Клонирование** — прочитать одну рацию и залить тот же образ во вторую.
+- **Пресеты** — готовые наборы под горы, холмы, лес, трассу и ближнюю связь, рядом описаны
+  ограничения РФ по мощности и сетке частот.
 
-## Quick start
+## Быстрый старт
 
 ```bash
 python3 -m pip install pyserial
 
-python3 scripts/pr21.py read --out radio.img     # read the radio, save an image
-python3 scripts/pr21.py show radio.img           # decode an image offline
-python3 scripts/pr21.py settings                 # show squelch, VOX, TOT, side keys
-python3 scripts/pr21.py settings --squelch 6     # change one setting
-python3 scripts/pr21.py write radio.img --yes    # write with backup and verification
+python3 scripts/pr21.py read --out radio.img     # прочитать рацию, сохранить образ
+python3 scripts/pr21.py show radio.img           # разобрать образ без рации
+python3 scripts/pr21.py settings                 # шумодав, VOX, TOT, боковые кнопки
+python3 scripts/pr21.py settings --squelch 6     # изменить одну настройку
+python3 scripts/pr21.py write radio.img --yes    # записать с бэкапом и сверкой
 ```
 
-## Using it as an agent skill
+## Как навык для агента
 
-`SKILL.md` is written for LLM agents: it states when to trigger, the safe order of operations,
-the protocol, and the five mistakes that cost hours (wrong byte counts on reads, unaligned
-writes, writing past the working area, testing with the cable plugged in, and the 4-byte column
-offset inside the vendor CPS).
+`SKILL.md` написан для ИИ-агентов: когда срабатывать, безопасный порядок действий, протокол и
+пять ошибок, которые стоят часов работы (неверное число байт при чтении, невыровненная запись,
+выход за рабочую область, тест с воткнутым кабелем и сдвиг на 4 в «колонках» CPS).
 
-Point your agent's skill directory at this repository, or paste `SKILL.md` and the `references/`
-folder into the task context.
+Подключите каталог навыков агента к этому репозиторию либо передайте `SKILL.md` и папку
+`references/` в контекст задачи. Русская версия — `SKILL.ru.md`, русские справочники —
+`references/ru/`.
 
-## Desktop app
+## Приложение
 
-![PR-21 Manager — the macOS app reading a real radio](assets/screenshot-app.png)
+![PR-21 Manager — приложение читает реальную рацию](assets/screenshot-app.png)
 
-*A screenshot of the app working with a physical radio: 16 channels read, profiles above the
-table, global radio settings on the right, backups below. The source lives in a separate private
-project; `BUILD.md` documents the build recipe. The app is a work in progress and is published
-as is — see the status section below.*
+*Снимок работающего приложения: прочитаны 16 каналов, сверху профили, справа глобальные
+настройки рации, ниже бэкапы. Исходники — в отдельном закрытом проекте; рецепт сборки описан
+в `BUILD.ru.md`. Приложение в работе и публикуется как есть — см. раздел о статусе.*
 
-## Language versions
+## Языковые версии
 
-| Version | Files |
+| Версия | Файлы |
 |---|---|
-| English | `SKILL.md`, `references/*.md`, this README |
-| Русский | `SKILL.ru.md`, `references/ru/*.md`, `README.ru.md` |
+| English | `SKILL.md`, `references/*.md`, `README.en.md` |
+| Русский | `SKILL.ru.md`, `references/ru/*.md`, этот README |
 
-## Status: as is
+## Статус: как есть
 
-This is a personal tool published **as is**. It works on the hardware described above and on
-nothing else that has been verified. Expectations:
+Это личный инструмент, опубликованный **как есть**. Он работает на железе, описанном выше,
+и ни на чём другом не проверялся. Ожидания:
 
-- **No warranty and no support obligations.** If something does not work, the fix is yours:
-  fork it, patch it, or ask an agent to do it.
-- **Issues and pull requests may be ignored.** There is no maintainer on duty.
-- **Writing to a radio can destroy its settings.** Keep the image backup the tool makes before
-  every write; the repository ships an example image for testing without hardware.
-- **The protocol was reverse-engineered**, not licensed from the vendor. Nothing here is
-  endorsed by ONIKS.
+- **Гарантий нет, обязательств по поддержке тоже.** Что-то не работает — правьте сами: форк,
+  патч или поручите агенту.
+- **Issues и pull request могут остаться без ответа.** Дежурного сопровождающего нет.
+- **Запись в рацию может испортить настройки.** Держите образ, который программа снимает перед
+  каждой записью; в репозитории есть образ для проверки без железа.
+- **Протокол восстановлен реверс-инжинирингом**, а не лицензирован у производителя. Ничего
+  здесь не одобрено ОНИКС.
 
-If you need it to work, treat the code as a starting point rather than a product.
+Если нужно, чтобы работало, — относитесь к коду как к заготовке, а не к продукту.
 
-## Repository layout
+## Состав репозитория
 
-| Path | Contents |
+| Путь | Что внутри |
 |---|---|
-| `SKILL.md` / `SKILL.ru.md` | agent instructions: triggers, workflow, protocol, pitfalls |
-| `references/*.md` | protocol, memory map, presets with the legal basis, compatible models, troubleshooting |
-| `references/ru/*.md` | the same reference files in Russian |
-| `scripts/pr21.py` | working CLI and reference implementation |
-| `assets/presets.json` | presets in machine-readable form |
-| `assets/screenshot-app.png` | the macOS app reading a real radio |
-| `app/` | macOS app sources (SwiftUI prototype), see `app/README.md` |
-| `BUILD.md` / `BUILD.ru.md` | build and run instructions |
-| `examples/pr21_dump.img` | memory image for testing without hardware |
+| `SKILL.md` / `SKILL.ru.md` | инструкция для агента: триггеры, порядок работы, протокол, грабли |
+| `references/*.md` | протокол, карта памяти, пресеты с правовой базой, совместимые модели, разбор сбоев |
+| `references/ru/*.md` | те же справочники по-русски |
+| `scripts/pr21.py` | рабочая утилита и эталонная реализация |
+| `assets/presets.json` | пресеты в машинночитаемом виде |
+| `assets/screenshot-app.png` | приложение, читающее реальную рацию |
+| `app/` | исходники приложения для macOS (прототип на SwiftUI), см. `app/README.ru.md` |
+| `BUILD.md` / `BUILD.ru.md` | как собрать и запустить |
+| `examples/pr21_dump.img` | образ памяти для проверки без рации |
 
 
-## Safety
+## Безопасность
 
-Writes touch only the channel area and only in 13-byte aligned blocks. The service area
-(calibration) is left alone unless explicitly requested. Every write is preceded by an image
-backup and followed by a read-back comparison.
+Запись идёт только в область каналов и только блоками по 13 байт, выровненными по адресу.
+Служебная зона (калибровка) не затрагивается без явного указания. Перед каждой записью
+снимается образ, после записи выполняется сверка чтением.
 
-## Legal note
+## Правовая заметка
 
-PMR446 and LPD use in Russia is limited in power and channel grid (GKRCh decisions
-No. 05-10-02-001 and No. 07-20-03-001). The tool does not block any power setting, but the
-documentation warns when a value exceeds the norm. The decision stays with the operator.
+Использование PMR446 и LPD в России ограничено по мощности и сетке частот (решения ГКРЧ
+№ 05-10-02-001 и № 07-20-03-001). Программа не блокирует мощность, но документация
+предупреждает, когда значение выходит за норму. Решение остаётся за владельцем оборудования.
 
-## Origin
+## Происхождение
 
-Protocol recovered from the vendor CPS (entry magic `CD18RAM`, block format, settings map) and
-verified on a physical radio on 2026-11-14. No vendor binaries or decompiled sources are
-included in this repository.
+Протокол восстановлен по файлам CPS производителя (магия входа `CD18RAM`, формат блоков,
+карта настроек) и проверен на физической рации 14.11.2026. Бинарники и декомпилированные
+исходники производителя в репозиторий не включены.
 
-## License
+## Лицензия
 
-MIT — see `LICENSE`.
+MIT — см. `LICENSE`.
 
 ---
 
-## По-русски, коротко
+## English, in short
 
-Навык для ИИ-моделей и утилита: чтение и запись каналов и настроек раций **ОНИКС ПР-21**
-(M31) через гарнитурный кабель Kenwood 2-pin на CH340. Работает на macOS, Windows и Linux.
-
-Протокол восстановлен реверс-инжинирингом CPS производителя и проверен на живом устройстве:
-вход по `CD18RAM`, блоки по 13 байт, карта каналов и настроек. Перед каждой записью снимается
-образ, после — сверка чтением. Правовая рамка (решения ГКРЧ по PMR446 и LPD) описана в
-`references/presets.md`: программа не запрещает мощность, но предупреждает о превышении нормы.
+An AI-agent skill plus a working toolkit for reading and writing ONIKS PR-21 (M31) radios over a
+Kenwood 2-pin cable. Runs on macOS, Windows and Linux. The protocol was recovered by
+reverse-engineering the vendor CPS and verified on real hardware: `CD18RAM` entry, 13-byte
+blocks, channel and settings maps. Every write is preceded by an image backup and followed by a
+read-back comparison. Полная английская версия — `README.en.md`.
