@@ -33,6 +33,29 @@ open "build/PR-21 Manager.app"
 
 `make build`, `make run` and `make clean` wrap the same commands.
 
+Install into `/Applications` (copies the bundle, strips quarantine, signs ad hoc):
+
+```bash
+make install
+```
+
+## Icon
+
+The icon lives in `resources/`: `icon.svg` is the source, `AppIcon.icns` is generated from it.
+It shows the radio itself — dark body, speaker grille, antenna, cyan PTT and radio waves — in the
+same palette as the app.
+
+To regenerate after editing the SVG:
+
+```bash
+python3 -m pip install cairosvg
+mkdir -p AppIcon.iconset
+for s in 16 32 128 256 512; do
+  python3 -c "import cairosvg,sys; s=int(sys.argv[1]); cairosvg.svg2png(url='resources/icon.svg', write_to=f'AppIcon.iconset/icon_{s}x{s}.png', output_width=s, output_height=s); cairosvg.svg2png(url='resources/icon.svg', write_to=f'AppIcon.iconset/icon_{s}x{s}@2x.png', output_width=s*2, output_height=s*2)" $s
+done
+iconutil -c icns AppIcon.iconset -o resources/AppIcon.icns
+```
+
 ## Structure
 
 | Path | Purpose |

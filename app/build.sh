@@ -25,11 +25,16 @@ else
   swiftc -O -parse-as-library -sdk "$SDK" -target "${ARCH}-apple-macos13.0"     -o "$BIN" $SOURCES
 fi
 
+if [ -f "$ROOT/resources/AppIcon.icns" ]; then
+  cp "$ROOT/resources/AppIcon.icns" "$APP/Contents/Resources/AppIcon.icns"
+fi
+
 cat > "$APP/Contents/Info.plist" <<PLIST
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0"><dict>
 <key>CFBundleExecutable</key><string>PR21Manager</string>
+<key>CFBundleIconFile</key><string>AppIcon</string>
 <key>CFBundleIdentifier</key><string>org.radiokit.pr21manager</string>
 <key>CFBundleName</key><string>PR-21 Manager</string>
 <key>CFBundlePackageType</key><string>APPL</string>

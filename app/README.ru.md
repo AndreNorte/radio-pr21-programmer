@@ -33,6 +33,29 @@ open "build/PR-21 Manager.app"
 
 `make build`, `make run` и `make clean` — те же команды.
 
+Установка в `/Applications` (копирует бандл, снимает карантин, подписывает ad hoc):
+
+```bash
+make install
+```
+
+## Иконка
+
+Иконка лежит в `resources/`: `icon.svg` — исходник, `AppIcon.icns` — собранный из него.
+На ней сама рация — тёмный корпус, решётка динамика, антенна, бирюзовые PTT и радиоволны —
+в той же палитре, что и приложение.
+
+Пересобрать после правки SVG:
+
+```bash
+python3 -m pip install cairosvg
+mkdir -p AppIcon.iconset
+for s in 16 32 128 256 512; do
+  python3 -c "import cairosvg,sys; s=int(sys.argv[1]); cairosvg.svg2png(url='resources/icon.svg', write_to=f'AppIcon.iconset/icon_{s}x{s}.png', output_width=s, output_height=s); cairosvg.svg2png(url='resources/icon.svg', write_to=f'AppIcon.iconset/icon_{s}x{s}@2x.png', output_width=s*2, output_height=s*2)" $s
+done
+iconutil -c icns AppIcon.iconset -o resources/AppIcon.icns
+```
+
 ## Структура
 
 | Путь | Назначение |
