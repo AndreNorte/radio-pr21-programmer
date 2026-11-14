@@ -1,35 +1,35 @@
-# Протокол ОНИКС ПР-21 (M31)
+# ONIKS PR-21 Protocol (M31)
 
-Скорость 9600 8N1. Все многобайтовые адреса — big-endian.
+Baud rate 9600 8N1. All multi-byte addresses are big-endian.
 
-## Вход в режим программирования
+## Entering programming mode
 
 1. `"CD18RAM"` → `0x06`
-2. `0x02` → 8 байт идентификатора
+2. `0x02` → 8-byte identifier
 3. `0x06` → `0x06`
 
-Ключ `CD18RAM` найден в .NET-строках `ПР-21.exe`. Слова `PROGRAM` и `TCOGRAM`
-рация игнорирует.
+The `CD18RAM` key was found in the .NET strings of `ПР-21.exe`. The radio ignores
+the words `PROGRAM` and `TCOGRAM`.
 
-## Чтение блока
+## Reading a block
 
-`'R'` + адрес (2 байта BE) + размер (1) → `'W'` + адрес + размер + данные
+`'R'` + address (2 bytes BE) + size (1) → `'W'` + address + size + data
 
-## Запись блока
+## Writing a block
 
-`'W'` + адрес (2 байта BE) + размер (1) + данные → `0x06`
+`'W'` + address (2 bytes BE) + size (1) + data → `0x06`
 
-- принимаются только выровненные блоки по 13 байт;
-- одиночный байт рация отвергает.
+- only aligned blocks of 13 bytes are accepted;
+- the radio rejects a single byte.
 
-## Выход
+## Exit
 
-`'E'`. Без него рация остаётся в режиме программирования: зелёный диод мигает,
-передача и писк не работают, повторный вход не отвечает.
+`'E'`. Without it the radio stays in programming mode: the green LED blinks,
+transmit and beep do not work, and a repeated entry does not respond.
 
-## Практические замечания
+## Practical notes
 
-- После записи нужен цикл питания.
-- При вставленных штекерах рация не передаёт и не пищит — это режим
-  программирования, а не поломка.
-- Сбой записи в конце памяти (0x03F6) откатывает всю сессию.
+- A power cycle is required after writing.
+- With the plugs inserted the radio does not transmit and does not beep — this is
+  programming mode, not a fault.
+- A write failure at the end of memory (0x03F6) rolls back the whole session.

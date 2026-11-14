@@ -1,5 +1,7 @@
 # radio-pr21-programmer
 
+**English** · [Русский](README.ru.md)
+
 An AI-agent skill plus a working toolkit for reading and writing **ONIKS PR-21** (M31 platform)
 handheld radios over a Kenwood 2-pin programming cable (CH340 USB-UART).
 
@@ -9,6 +11,32 @@ Runs on macOS, Windows and Linux. No vendor software, no extra drivers beyond th
 
 *Real output: all 16 channels and every radio setting read from a physical ONIKS PR-21,
 then decoded offline from a saved memory image.*
+
+## Tested hardware
+
+| Item | Value |
+|---|---|
+| Radio | **ONIKS PR-21**, 16 channels, 400–480 MHz, 0.5 / 2 W, no display, M31 platform |
+| Cable | USB-UART **CH340** (VID 0x1a86 / PID 0x7523), Kenwood 2-pin (3.5 mm + 2.5 mm) |
+| Host | macOS 15.8.3, Intel (also used earlier with the vendor CPS on Windows) |
+| Date | 2026-11-14 |
+
+What was actually verified on this device, not assumed:
+
+- **Read** — all 16 channels decoded; compared against the vendor CPS screen, **16 of 16 matched**,
+  including DCS codes and the disabled tone on channel 16.
+- **Settings** — squelch 5, beep on, battery save on, voice English, scan Carrier, TOT 60 s,
+  VOX 5, VOX delay 1.5 s, side keys Scan and Voice control — every value matched the CPS display.
+- **Write** — a channel's tone was changed, the radio acknowledged it, read-back confirmed the
+  change, then the original image was restored and compared byte for byte.
+- **Squelch behaviour** — level 0 opened the squelch (audible noise), level 5 was quiet again.
+- **Backup/restore** — the full 256-byte image was written back and matched the source exactly.
+
+The radio reports an 8-byte identifier that changes between sessions; the tool does not rely on it.
+
+**Other models are not tested.** ONIKS PR-20, PR-25, PR-27, PR-28 and PR-61 look similar on paper
+(same brand, same Kenwood jack, same vendor programmer), but no unit was available. See
+`references/compatible-models.md` for the compatibility criteria and the safe way to check a model.
 
 ## Why this exists
 
@@ -56,6 +84,13 @@ folder into the task context.
 build. The core protocol layer is already implemented and cross-checked against the Python
 reference; the GUI is still in progress. Mockup source: `docs/design-brief.md` lineage in the
 project repository.*
+
+## Language versions
+
+| Version | Files |
+|---|---|
+| English | `SKILL.md`, `references/*.md`, this README |
+| Русский | `SKILL.ru.md`, `references/ru/*.md`, `README.ru.md` |
 
 ## Repository layout
 

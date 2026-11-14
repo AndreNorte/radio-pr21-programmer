@@ -1,63 +1,63 @@
-# Если рация не отвечает
+# If the Radio Does Not Respond
 
-Диагностика идёт от простого к сложному. Не перебирайте протоколы, пока не проверили физику.
+Diagnostics proceeds from simple to complex. Do not try protocol variants until you have checked the physical layer.
 
-## 1. Порт вообще есть?
+## 1. Does the port exist at all?
 
-- macOS: `ls /dev/cu.usb* /dev/cu.wch*`. Если пусто — кабель не распознан. Драйвер CH340
-  на macOS 15 встроенный (`AppleUSBCHCOM`), ставить ничего не нужно. Если ставили драйвер WCH,
-  порт может называться `/dev/cu.wchusbserial*` — это нормально.
-- Windows: диспетчер устройств → «Порты (COM и LPT)». Нет устройства — нет драйвера CH340.
-- Linux: `ls /dev/ttyUSB*`, пользователь должен быть в группе `dialout`.
+- macOS: `ls /dev/cu.usb* /dev/cu.wch*`. If empty, the cable is not recognized. The CH340
+  driver on macOS 15 is built in (`AppleUSBCHCOM`), nothing needs to be installed. If you did install
+  the WCH driver, the port may be named `/dev/cu.wchusbserial*` — that is normal.
+- Windows: Device Manager → "Ports (COM and LPT)". No device — no CH340 driver.
+- Linux: `ls /dev/ttyUSB*`, the user must be in the `dialout` group.
 
-## 2. Кабель в рации, рация включена?
+## 2. Is the cable in the radio, is the radio on?
 
-Пока вставлены штекера, рация в режиме программирования: **не передаёт, не пищит, диод мигает
-зелёным**. Если пользователь жалуется, что «рация перестала работать», сначала уточните, вынут
-ли кабель, и попросите цикл питания.
+While the plugs are inserted, the radio is in programming mode: **it does not transmit, does not beep, the LED blinks
+green**. If the user complains that "the radio stopped working", first ask whether the cable is unplugged,
+and request a power cycle.
 
-## 3. Нет ответа на `CD18RAM`
+## 3. No response to `CD18RAM`
 
-Проверьте по порядку:
+Check in order:
 
-1. Скорость 9600, 8N1 — другую рация не поймёт.
-2. Отправляется `0x02`, затем строка `CD18RAM`, и только потом читается ответ.
-3. Порт не занят другим процессом (браузер с WebUSB, старая копия программы).
-4. Повторите вход 5–6 раз: после неудачной записи рация может остаться в промежуточном
-   состоянии. Перед повтором отправьте `'E'`.
-5. Если тишина и после этого — выньте штекеры, выключите рацию, включите снова, вставьте
-   штекеры, повторите.
+1. Baud rate 9600, 8N1 — the radio will not understand anything else.
+2. `0x02` is sent, then the string `CD18RAM`, and only then the response is read.
+3. The port is not busy with another process (a browser with WebUSB, an old copy of the program).
+4. Repeat the entry 5–6 times: after a failed write the radio may remain in an intermediate
+   state. Before retrying, send `'E'`.
+5. If there is still silence after that — unplug the plugs, turn the radio off, turn it on again, insert
+   the plugs, retry.
 
-## 4. Чтение идёт, но очень медленно
+## 4. Reading works, but very slowly
 
-Классика: запросили 8 байт, а читаете 20 — драйвер ждёт несуществующие байты до таймаута.
-Читайте ровно `4 + размер`, блоками по 13 байт.
+Classic case: you requested 8 bytes but read 20 — the driver waits for nonexistent bytes until timeout.
+Read exactly `4 + size`, in blocks of 13 bytes.
 
-## 5. Запись «прошла», но ничего не изменилось
+## 5. The write "succeeded", but nothing changed
 
-Проверьте чтением. Возможные причины:
+Verify by reading. Possible causes:
 
-- писали невыровненным блоком (рация принимает только 13 байт с адреса, кратного 13);
-- задели хвост памяти (около `0x03F6`) — в этом случае сессия откатывается целиком;
-- не отправили выход `'E'` и не сделали цикл питания, поэтому настройки не применились.
+- the write used an unaligned block (the radio accepts only 13 bytes from an address that is a multiple of 13);
+- the tail of memory was touched (around `0x03F6`) — in this case the session is rolled back entirely;
+- the exit `'E'` was not sent and no power cycle was done, so the settings were not applied.
 
-## 6. Рация отвечает, но значения абсурдные
+## 6. The radio responds, but the values are absurd
 
-Сверьтесь с картой памяти: частоты в единицах 10 Гц, тон `0x8000 | код` для DCS, `0xFFFF` для
-выключенного тона. Самая частая ошибка — читать тон как десятичный CTCSS, когда это
-восьмеричный DCS-код.
+Check against the memory map: frequencies are in units of 10 Hz, the tone is `0x8000 | code` for DCS, `0xFFFF` for
+a disabled tone. The most common mistake is reading a tone as decimal CTCSS when it is an
+octal DCS code.
 
-## 7. Пользователь боится «окирпичить» рацию
+## 7. The user is afraid of "bricking" the radio
 
-Это разумно, и это надо уважать. Что говорить по факту: рабочая зона каналов отделена от
-служебной, у нас есть образ для откатa, а протокол не трогает загрузчик. Опасность
-представляет только запись в служебную зону и потеря резервной копии, поэтому: образ до
-записи, сверка после, откат одной командой.
+That is reasonable, and it must be respected. What to say, factually: the working channel area is separated from
+the service area, we have an image for rollback, and the protocol does not touch the bootloader. The danger
+comes only from writing to the service area and from losing the backup copy, therefore: image before
+writing, verification after, rollback with one command.
 
-## 8. Что не поможет
+## 8. What will not help
 
-- Перебор скоростей 2400…115200: рабочая только 9600.
-- Перебор «магических» слов `PROGRAM`, `TCOGRAM`, `PWPG970` и ASCII-ключей: у этой платформы
-  ключ один — `CD18RAM`.
-- Установка драйвера WCH «на всякий случай»: встроенного достаточно.
-- Замыкание штекеров для проверки петли: распиновка кабеля неизвестна, тест ничего не докажет.
+- Trying baud rates 2400…115200: only 9600 works.
+- Trying "magic" words `PROGRAM`, `TCOGRAM`, `PWPG970` and ASCII keys: this platform has
+  only one key — `CD18RAM`.
+- Installing the WCH driver "just in case": the built-in one is enough.
+- Shorting the plugs to test a loopback: the cable pinout is unknown, the test will prove nothing.

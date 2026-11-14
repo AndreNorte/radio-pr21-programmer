@@ -1,51 +1,51 @@
-# Карта памяти ПР-21
+# PR-21 Memory Map
 
-Память — 256 байт. Адреса ≥ 0x0100 повторяют 0x0000 (проверено дампом).
+Memory is 256 bytes. Addresses ≥ 0x0100 mirror 0x0000 (verified by dump).
 
-## Каналы: 0x0000–0x00CF, 16 записей по 13 байт
+## Channels: 0x0000–0x00CF, 16 records of 13 bytes
 
-| Смещение | Поле |
+| Offset | Field |
 |---|---|
-| 0..3 | RX, 4 байта LE, единицы 10 Гц (44600625 = 446.00625 МГц) |
-| 4..7 | TX, так же |
-| 8..9 | тон RX, 2 байта LE |
-| 10..11 | тон TX, 2 байта LE |
-| 12 | флаги |
+| 0..3 | RX, 4 bytes LE, units of 10 Hz (44600625 = 446.00625 MHz) |
+| 4..7 | TX, same |
+| 8..9 | RX tone, 2 bytes LE |
+| 10..11 | TX tone, 2 bytes LE |
+| 12 | flags |
 
-Тон: `0x8000 | код` — DCS (код в восьмеричном виде: D074N = 0o74 = 0x803C),
-иначе CTCSS в десятых долях герца, `0xFFFF` — выключен.
+Tone: `0x8000 | code` — DCS (code in octal: D074N = 0o74 = 0x803C),
+otherwise CTCSS in tenths of a hertz, `0xFFFF` — disabled.
 
-Флаги канала (подтверждено сравнением с CPS):
+Channel flags (confirmed by comparison with CPS):
 
-| Бит | Значение |
+| Bit | Meaning |
 |---|---|
-| 0x01 | Busy Lock выключен |
-| 0x08 | Высокая мощность (0 — низкая) |
-| 0x10 | Scan Add выключен |
-| 0x20 | Scrambler выключен |
-| 0x40 | Compander выключен |
+| 0x01 | Busy Lock off |
+| 0x08 | High power (0 — low) |
+| 0x10 | Scan Add off |
+| 0x20 | Scrambler off |
+| 0x40 | Compander off |
 
-Бит ширины полосы (Wide/Narrow) пока не найден.
+The bandwidth bit (Wide/Narrow) has not been found yet.
 
-## Настройки: 0x00D0–0x00FF, блок 13 байт
+## Settings: 0x00D0–0x00FF, 13-byte block
 
-Раскладка восстановлена из декомпилированного CPS (`docs/cps-analysis.md`) и сверена
-с его экраном: совпали все значения.
+The layout was recovered from the decompiled CPS (`docs/cps-analysis.md`) and checked
+against its screen: all values matched.
 
-| Смещение | Что | Значения |
+| Offset | What | Values |
 |---|---|---|
-| 0 | флаги | бит0 писк, бит1 экономия батареи, биты2-3 голос (0 нет, 1 китайский, 2 английский), биты4-5 spec (0 Spec 1, 1 Spec 2), бит6 скан (0 Carrier, 1 Time), бит7 служебный |
-| 1 | шумоподавление | 0..9 (0 — открыто) |
-| 2 | TOT | 0 = OFF, 1..10 = 30..300 с шагом 30 |
+| 0 | flags | bit0 beep, bit1 battery save, bits2-3 voice (0 none, 1 Chinese, 2 English), bits4-5 spec (0 Spec 1, 1 Spec 2), bit6 scan (0 Carrier, 1 Time), bit7 service |
+| 1 | squelch | 0..9 (0 — open) |
+| 2 | TOT | 0 = OFF, 1..10 = 30..300 s in 30 s steps |
 | 3 | VOX | 0 = OFF, 1..9 |
-| 4 | задержка VOX | 0..5 = 0,5..3,0 с |
-| 7 | боковая кнопка 1 | 0 OFF, 1 Transient monitoring, 2 Scan, 3 Voice control, 4 High/Low Power |
-| 8 | боковая кнопка 2 | то же |
-| 5, 6, 9..12 | служебные | эта модель CPS их не использует |
+| 4 | VOX delay | 0..5 = 0.5..3.0 s |
+| 7 | side button 1 | 0 OFF, 1 Transient monitoring, 2 Scan, 3 Voice control, 4 High/Low Power |
+| 8 | side button 2 | same |
+| 5, 6, 9..12 | service | this CPS model does not use them |
 
-Проверено на устройстве: чтение настроек даёт значения, совпадающие с экраном CPS
-(шумоподавление 5, писк вкл, экономия вкл, English, Carrier, TOT 60, VOX 5, задержка 1,5,
-боковые Scan и Voice control); запись `--squelch 6` и возврат `--squelch 5` прошли с
-побайтовой сверкой.
+Verified on the device: reading the settings gives values matching the CPS screen
+(squelch 5, beep on, battery save on, English, Carrier, TOT 60, VOX 5, delay 1.5,
+side buttons Scan and Voice control); writing `--squelch 6` and reverting with `--squelch 5`
+passed with byte-by-byte verification.
 
-Не найдено: бит ширины полосы Narrow во флаге канала.
+Not found: the Narrow bandwidth bit in the channel flag.
