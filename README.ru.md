@@ -114,20 +114,15 @@ python3 scripts/pr21.py write radio.img --yes    # записать с бэка�
 | Путь | Что внутри |
 |---|---|
 | `SKILL.md` / `SKILL.ru.md` | инструкция для агента: триггеры, порядок работы, протокол, грабли |
-| `references/protocol.md` | протокол целиком |
-| `references/memory-map.md` | карта памяти: каналы, флаги, настройки |
-| `references/presets.md` | пресеты под рельеф с правовой базой и ссылками |
-| `references/compatible-models.md` | какие модели могут работать и как проверить |
-| `references/troubleshooting.md` | если рация не отвечает |
-| `references/ru/` | те же справочники по-русски |
-| `BUILD.md` / `BUILD.ru.md` | как собрать и запустить |
-| `assets/screenshot-app.png` | приложение, читающее реальную рацию |
-| `references/ru/` | те же справочники по-русски |
-| `BUILD.md` / `BUILD.ru.md` | как собрать и запустить |
-| `assets/screenshot-app.png` | приложение, читающее реальную рацию |
+| `references/*.md` | протокол, карта памяти, пресеты с правовой базой, совместимые модели, разбор сбоев |
+| `references/ru/*.md` | те же справочники по-русски |
 | `scripts/pr21.py` | рабочая утилита и эталонная реализация |
 | `assets/presets.json` | пресеты в машинночитаемом виде |
+| `assets/screenshot-app.png` | приложение, читающее реальную рацию |
+| `app/` | исходники приложения для macOS (прототип на SwiftUI), см. `app/README.ru.md` |
+| `BUILD.md` / `BUILD.ru.md` | как собрать и запустить |
 | `examples/pr21_dump.img` | образ памяти для проверки без рации |
+
 
 ## Безопасность
 

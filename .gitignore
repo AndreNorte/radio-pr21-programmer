@@ -3,3 +3,12 @@ __pycache__/
 .DS_Store
 venv/
 *.img.bak
+
+# секреты: никогда не коммитить
+.gh-token
+*.token
+*.pem
+*.key
+.env
+build/
+*.app

@@ -3,7 +3,7 @@
 **English** · [Русский](BUILD.ru.md)
 
 Two separate things live here: the Python tool (works everywhere) and the macOS app
-(sources are not part of this repository — see the last section).
+(sources in `app/`).
 
 ## 1. The Python tool (all platforms)
 
@@ -53,9 +53,19 @@ or `~/.claude/skills/radio-pr21/`) by unpacking the archive there, or simply pas
 
 ## 3. The macOS application
 
-The GUI is a separate SwiftUI project and its sources are **not** in this repository.
-This section documents the build recipe so the app can be rebuilt from its sources
-if you have them.
+Sources are in `app/`. The app is a prototype — see `app/README.md` for what works and what
+does not.
+
+```bash
+cd app
+./build.sh                 # Intel
+ARCH=arm64 ./build.sh      # Apple Silicon
+UNIVERSAL=1 ./build.sh     # both architectures (not tested)
+open "build/PR-21 Manager.app"
+```
+
+The script compiles with the SDK from Command Line Tools, assembles the bundle and signs it
+ad hoc. If you prefer to do it by hand, the same steps are:
 
 Requirements:
 

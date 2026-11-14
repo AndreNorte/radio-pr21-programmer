@@ -111,15 +111,16 @@ If you need it to work, treat the code as a starting point rather than a product
 
 | Path | Contents |
 |---|---|
-| `SKILL.md` | agent instructions: triggers, workflow, protocol, pitfalls |
-| `references/protocol.md` | wire protocol in full |
-| `references/memory-map.md` | memory layout: channels, flags, settings |
-| `references/presets.md` | terrain presets with the legal basis and sources |
-| `references/compatible-models.md` | models that may work, and how to check |
-| `references/troubleshooting.md` | when the radio does not answer |
+| `SKILL.md` / `SKILL.ru.md` | agent instructions: triggers, workflow, protocol, pitfalls |
+| `references/*.md` | protocol, memory map, presets with the legal basis, compatible models, troubleshooting |
+| `references/ru/*.md` | the same reference files in Russian |
 | `scripts/pr21.py` | working CLI and reference implementation |
 | `assets/presets.json` | presets in machine-readable form |
+| `assets/screenshot-app.png` | the macOS app reading a real radio |
+| `app/` | macOS app sources (SwiftUI prototype), see `app/README.md` |
+| `BUILD.md` / `BUILD.ru.md` | build and run instructions |
 | `examples/pr21_dump.img` | memory image for testing without hardware |
+
 
 ## Safety
 
