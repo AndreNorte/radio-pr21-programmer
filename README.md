@@ -76,14 +76,14 @@ offset inside the vendor CPS).
 Point your agent's skill directory at this repository, or paste `SKILL.md` and the `references/`
 folder into the task context.
 
-## Planned desktop app
+## Desktop app
 
-![UI mockup — planned, not released](assets/screenshot-ui-mockup.png)
+![PR-21 Manager — the macOS app reading a real radio](assets/screenshot-app.png)
 
-*This is a design mockup of the planned macOS app (SwiftUI), not a screenshot of a shipped
-build. The core protocol layer is already implemented and cross-checked against the Python
-reference; the GUI is still in progress. Mockup source: `docs/design-brief.md` lineage in the
-project repository.*
+*A screenshot of the app working with a physical radio: 16 channels read, profiles above the
+table, global radio settings on the right, backups below. The source lives in a separate private
+project; `BUILD.md` documents the build recipe. The app is a work in progress and is published
+as is — see the status section below.*
 
 ## Language versions
 
@@ -91,6 +91,21 @@ project repository.*
 |---|---|
 | English | `SKILL.md`, `references/*.md`, this README |
 | Русский | `SKILL.ru.md`, `references/ru/*.md`, `README.ru.md` |
+
+## Status: as is
+
+This is a personal tool published **as is**. It works on the hardware described above and on
+nothing else that has been verified. Expectations:
+
+- **No warranty and no support obligations.** If something does not work, the fix is yours:
+  fork it, patch it, or ask an agent to do it.
+- **Issues and pull requests may be ignored.** There is no maintainer on duty.
+- **Writing to a radio can destroy its settings.** Keep the image backup the tool makes before
+  every write; the repository ships an example image for testing without hardware.
+- **The protocol was reverse-engineered**, not licensed from the vendor. Nothing here is
+  endorsed by ONIKS.
+
+If you need it to work, treat the code as a starting point rather than a product.
 
 ## Repository layout
 
