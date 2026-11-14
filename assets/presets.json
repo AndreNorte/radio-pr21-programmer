@@ -1,0 +1,32 @@
+{
+  "schema": "radio-pr21 presets v1",
+  "note": "Мощность не догма: high допустим, но выше нормы PMR446 (0,5 Вт ЭИИМ). Показывайте ненавязчивое предупреждение.",
+  "channel_map": {
+    "pmr446_ru": ["446.00625","446.01875","446.03125","446.04375","446.05625","446.06875","446.08125","446.09375"],
+    "lpd": ["434.50000","434.52500","434.55000","434.57500","434.60000","434.62500","434.65000","434.67500"]
+  },
+  "presets": [
+    {"id":"mountains","title":"Горы, открытая линия","channel":1,"frequency":"446.00625",
+     "tone_rx":"D074N","tone_tx":"D074N","power":"high","squelch":4,"scan":false,
+     "when":"гребень, долина в прямой видимости"},
+    {"id":"hills","title":"Холмы, пересечёнка","channel":6,"frequency":"446.06875",
+     "tone_rx":"D411N","tone_tx":"D411N","power":"high","squelch":6,"scan":false,
+     "when":"гребни, частичная видимость, рабочий канал владельца"},
+    {"id":"forest_powerline","title":"Лес, предгорье у ЛЭП","channel":8,"frequency":"446.09375",
+     "tone_rx":"D631N","tone_tx":"D631N","power":"high","squelch":7,"scan":false,
+     "when":"кроны и импульсные помехи"},
+    {"id":"road","title":"Трасса, дорога","channel":3,"frequency":"446.03125",
+     "tone_rx":"D155N","tone_tx":"D155N","power":"low","squelch":5,"scan":true,
+     "when":"движение рядом, поиск попутчиков"},
+    {"id":"camp","title":"Лагерь, экономный","channel":2,"frequency":"446.01875",
+     "tone_rx":"D114N","tone_tx":"D114N","power":"low","squelch":5,"scan":false,
+     "when":"ближняя связь, бережём батарею"},
+    {"id":"lpd_near","title":"LPD, ближняя связь","channel":9,"frequency":"434.50000",
+     "tone_rx":"D047N","tone_tx":"D047N","power":"low","squelch":5,"scan":false,
+     "when":"200-500 м; вне нормы LPD по ЭИИМ"}
+  ],
+  "warnings": {
+    "high_on_pmr446": "Выбрано 2 Вт — выше нормы PMR446 (0,5 Вт). Это предупреждение, а не запрет: решение за вами.",
+    "lpd_any_power": "В полосе LPD норма около 20 мВт ЭИИМ; эта рация не умеет так мало."
+  }
+}
